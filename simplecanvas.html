@@ -1,0 +1,143 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>simple canvas </title>
+    <style>
+    	* { padding: 0; margin: 0; margin-top: 20px  }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="720" height="480"></canvas>
+
+<script>
+	var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    var ballRadius = 10;
+    var y=canvas.clientHeight/2;
+    var x=canvas.clientWidth/10;
+    var barrikheight=canvas.clientHeight/3;
+    var barrikheight2=canvas.clientHeight/4;
+    var gapwidth=80;
+    var length= ballRadius;
+    var balldistance=400;
+    var balldistance2=800;
+    var dx=-2;
+    var dy=-4;
+    var uppressed = null;
+    var flag=1;
+    var score=0;
+    //space listner
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if(e.key == "Up" || e.key == "ArrowUp") {
+            uppressed = true;
+        }
+    }
+
+    function keyUpHandler(e) {
+        if(e.key == "Up" || e.key == "ArrowUp") {
+            uppressed = false;
+        }
+    }
+
+    function drawbarrik(){
+        ctx.beginPath();
+        ctx.rect(balldistance,0,length,barrikheight-gapwidth/2);
+        ctx.rect(balldistance,barrikheight+gapwidth/2,length,canvas.clientHeight-barrikheight-gapwidth/2)
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+    function drawbarrik2(){
+        ctx.beginPath();
+        ctx.rect(balldistance2,0,length,barrikheight2-gapwidth/2);
+        ctx.rect(balldistance2,barrikheight2+gapwidth/2,length,canvas.clientHeight-barrikheight2-gapwidth/2)
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+    function drawBall() {
+    // drawing code
+        ctx.beginPath();
+        ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawScore() {
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#0095DD";
+        ctx.fillText("Score: "+score, 8, 20);
+    }
+    function collisiondetection(){
+        if(balldistance===x-length){
+            if(y>barrikheight+gapwidth/2 || y<barrikheight-gapwidth/2){
+                flag=0;
+            }
+            else{
+                score++;
+            }
+        }
+        if(balldistance2===x+length){
+            if(y>barrikheight2+gapwidth/2 || y<barrikheight2-gapwidth/2){
+                flag=0;
+            }
+            else{
+                score++;
+            }
+        }
+        if(y>=canvas.height-ballRadius || y<=0+ballRadius){
+        // alert("GAME OVER");
+            flag=0;
+            // document.location.reload();
+        }
+
+        
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBall();
+        drawbarrik();
+        drawbarrik2();
+        drawScore();
+        collisiondetection();
+        balldistance=balldistance+dx;
+        balldistance2=balldistance2+dx;
+        if(balldistance<=0){
+            balldistance=canvas.width;
+            barrikheight=Math.floor((Math.random() *3) -1)*gapwidth+canvas.height/2;
+        }
+        if(balldistance2<=0){
+            balldistance2=canvas.width;
+            barrikheight2=Math.floor((Math.random() *5) -2)*gapwidth+canvas.height/2;
+        }
+        
+        if(uppressed){
+            y=y+2*dy;
+
+        }
+        y=y-dy;
+        
+        if(flag!==0){
+            requestAnimationFrame(draw);
+        }
+        else{
+            alert("GAME OVER");
+            document.location.reload();
+        }
+    }
+    draw();
+
+
+    
+</script>
+
+</body>
+</html>
